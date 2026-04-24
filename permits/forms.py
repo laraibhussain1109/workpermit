@@ -61,4 +61,18 @@ class WorkPermitForm(forms.ModelForm):
 class GovernmentIDForm(forms.ModelForm):
     class Meta:
         model = GovernmentID
-        fields = ['id_type', 'id_number', 'id_photo', 'visitor_photo']
+        fields = ['id_type', 'id_number', 'id_photo']
+        widgets = {
+            'id_photo': forms.FileInput(attrs={'accept': '.jpeg,.jpg,.png,.pdf,image/jpeg,image/png,application/pdf'}),
+        }
+
+    def clean_id_photo(self):
+        id_photo = self.cleaned_data.get('id_photo')
+        if not id_photo:
+            return id_photo
+
+        allowed_extensions = {'.jpeg', '.jpg', '.png', '.pdf'}
+        file_name = id_photo.name.lower()
+        if not any(file_name.endswith(ext) for ext in allowed_extensions):
+            raise ValidationError('Government ID softcopy must be JPEG, JPG, PNG, or PDF.')
+        return id_photo

@@ -102,9 +102,13 @@ class GovernmentID(models.Model):
     permit_request = models.OneToOneField(WorkPermitRequest, on_delete=models.CASCADE, related_name='government_id')
     id_type = models.CharField(max_length=30, choices=IdType.choices)
     id_number = models.CharField(max_length=100)
-    id_photo = models.ImageField(upload_to='government_ids/')
-    visitor_photo = models.ImageField(upload_to='visitor_photos/')
+    id_photo = models.FileField(upload_to='government_ids/')
+    visitor_photo = models.ImageField(upload_to='visitor_photos/', blank=True, null=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.id_type} - {self.id_number}'
+
+    @property
+    def id_photo_is_pdf(self):
+        return self.id_photo.name.lower().endswith('.pdf')

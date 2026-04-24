@@ -33,13 +33,14 @@ def create_request(request):
 def request_detail(request, pk):
     permit = get_object_or_404(WorkPermitRequest, pk=pk, requested_by=request.user)
 
-    if permit.status == WorkPermitRequest.Status.APPROVED and not hasattr(permit, 'government_id'):
-        gov_form = GovernmentIDForm(request.POST or None, request.FILES or None)
+    gov_record = getattr(permit, 'government_id', None)
+    if permit.status == WorkPermitRequest.Status.APPROVED:
+        gov_form = GovernmentIDForm(request.POST or None, request.FILES or None, instance=gov_record)
         if request.method == 'POST' and gov_form.is_valid():
             gov = gov_form.save(commit=False)
             gov.permit_request = permit
             gov.save()
-            messages.success(request, 'Government ID submitted successfully.')
+            messages.success(request, 'Government ID details saved successfully.')
             return redirect('request_detail', pk=permit.pk)
     else:
         gov_form = None
