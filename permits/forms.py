@@ -61,4 +61,4 @@ class WorkPermitForm(forms.ModelForm):
 class GovernmentIDForm(forms.ModelForm):
     class Meta:
         model = GovernmentID
-        fields = ['id_type', 'id_number', 'id_photo']
+        fields = ['id_type', 'id_number', 'id_photo', 'visitor_photo']

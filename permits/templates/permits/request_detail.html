@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <section class="panel">
-  <h2>Request #{{ permit.id }}</h2>
+  <h2>Request {{ permit.request_id }}</h2>
   <div class="status {{ permit.status }}">{{ permit.get_status_display }}</div>
   <p><strong>Location:</strong> {{ permit.location }}</p>
   <p><strong>Contractor:</strong> {{ permit.contractor_name }}</p>
@@ -18,15 +18,26 @@
     {% csrf_token %}
     <label>{{ gov_form.id_type.label }} {{ gov_form.id_type }}</label>
     <label>{{ gov_form.id_number.label }} {{ gov_form.id_number }}</label>
-    <label class="full">{{ gov_form.id_photo.label }} {{ gov_form.id_photo }}</label>
+    <label>{{ gov_form.id_photo.label }} {{ gov_form.id_photo }}</label>
+    <label>{{ gov_form.visitor_photo.label }} {{ gov_form.visitor_photo }}</label>
 
     <div class="camera full">
       <video id="camera-preview" playsinline autoplay muted></video>
       <canvas id="camera-canvas" class="hidden"></canvas>
-      <img id="capture-preview" class="capture-preview hidden" alt="Captured ID" />
+      <div class="capture-grid">
+        <div>
+          <img id="capture-preview-id" class="capture-preview hidden" alt="Captured government ID" />
+          <p class="muted">Government ID preview</p>
+        </div>
+        <div>
+          <img id="capture-preview-visitor" class="capture-preview hidden" alt="Captured visitor photo" />
+          <p class="muted">Visitor passport-size preview</p>
+        </div>
+      </div>
       <div class="camera-actions">
         <button type="button" id="start-camera">Start Camera</button>
-        <button type="button" id="capture-photo">Capture Photo</button>
+        <button type="button" id="capture-id-photo">Capture ID Photo</button>
+        <button type="button" id="capture-visitor-photo">Capture Visitor Photo</button>
         <button type="button" id="stop-camera">Stop Camera</button>
       </div>
       <p id="camera-error" class="error"></p>
@@ -41,7 +52,10 @@
   <h3>Government ID Submitted</h3>
   <p><strong>Type:</strong> {{ permit.government_id.id_type }}</p>
   <p><strong>ID Number:</strong> {{ permit.government_id.id_number }}</p>
-  <img class="capture-preview" src="{{ permit.government_id.id_photo.url }}" alt="ID Photo" />
+  <div class="capture-grid">
+    <img class="capture-preview" src="{{ permit.government_id.id_photo.url }}" alt="ID Photo" />
+    <img class="capture-preview" src="{{ permit.government_id.visitor_photo.url }}" alt="Visitor Photo" />
+  </div>
 </section>
 {% endif %}
 {% endblock %}

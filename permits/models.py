@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
+import uuid
 
 
 class WorkPermitRequest(models.Model):
@@ -41,6 +42,7 @@ class WorkPermitRequest(models.Model):
     ]
 
     requested_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='work_permits')
+    request_id = models.CharField(max_length=20, unique=True, editable=False)
     valid_from = models.DateField()
     valid_to = models.DateField()
     location = models.CharField(max_length=255)
@@ -75,7 +77,12 @@ class WorkPermitRequest(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'{self.location} ({self.get_status_display()})'
+        return f'{self.request_id} - {self.location} ({self.get_status_display()})'
+
+    def save(self, *args, **kwargs):
+        if not self.request_id:
+            self.request_id = f'WPR-{uuid.uuid4().hex[:8].upper()}'
+        super().save(*args, **kwargs)
 
     def work_types_list(self):
         return [v for v in self.work_types.split('|') if v]
@@ -96,6 +103,7 @@ class GovernmentID(models.Model):
     id_type = models.CharField(max_length=30, choices=IdType.choices)
     id_number = models.CharField(max_length=100)
     id_photo = models.ImageField(upload_to='government_ids/')
+    visitor_photo = models.ImageField(upload_to='visitor_photos/')
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
