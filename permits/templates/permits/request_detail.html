@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 <section class="panel">
   <h2>Request {{ permit.request_id }}</h2>
@@ -19,42 +18,24 @@
     <label>{{ gov_form.id_type.label }} {{ gov_form.id_type }}</label>
     <label>{{ gov_form.id_number.label }} {{ gov_form.id_number }}</label>
     <label>{{ gov_form.id_photo.label }} {{ gov_form.id_photo }}</label>
-    <label>{{ gov_form.visitor_photo.label }} {{ gov_form.visitor_photo }}</label>
 
-    <div class="camera full">
-      <video id="camera-preview" playsinline autoplay muted></video>
-      <canvas id="camera-canvas" class="hidden"></canvas>
-      <div class="capture-grid">
-        <div>
-          <img id="capture-preview-id" class="capture-preview hidden" alt="Captured government ID" />
-          <p class="muted">Government ID preview</p>
-        </div>
-        <div>
-          <img id="capture-preview-visitor" class="capture-preview hidden" alt="Captured visitor photo" />
-          <p class="muted">Visitor passport-size preview</p>
-        </div>
-      </div>
-      <div class="camera-actions">
-        <button type="button" id="start-camera">Start Camera</button>
-        <button type="button" id="capture-id-photo">Capture ID Photo</button>
-        <button type="button" id="capture-visitor-photo">Capture Visitor Photo</button>
-        <button type="button" id="stop-camera">Stop Camera</button>
-      </div>
-      <p id="camera-error" class="error"></p>
-    </div>
-
-    <button class="accent full" type="submit">Submit Government ID</button>
+    <button class="accent full" type="submit">Save Government ID Details</button>
   </form>
 </section>
-<script src="{% static 'js/id_capture.js' %}"></script>
 {% elif permit.government_id %}
 <section class="panel gov-card">
   <h3>Government ID Submitted</h3>
   <p><strong>Type:</strong> {{ permit.government_id.id_type }}</p>
   <p><strong>ID Number:</strong> {{ permit.government_id.id_number }}</p>
   <div class="capture-grid">
-    <img class="capture-preview" src="{{ permit.government_id.id_photo.url }}" alt="ID Photo" />
-    <img class="capture-preview" src="{{ permit.government_id.visitor_photo.url }}" alt="Visitor Photo" />
+    {% if permit.government_id.id_photo_is_pdf %}
+      <p><a href="{{ permit.government_id.id_photo.url }}" target="_blank" rel="noopener">View Government ID PDF</a></p>
+    {% else %}
+      <img class="capture-preview" src="{{ permit.government_id.id_photo.url }}" alt="ID Photo" />
+    {% endif %}
+    {% if permit.government_id.visitor_photo %}
+      <img class="capture-preview" src="{{ permit.government_id.visitor_photo.url }}" alt="Visitor Photo" />
+    {% endif %}
   </div>
 </section>
 {% endif %}
