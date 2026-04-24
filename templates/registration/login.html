@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="panel auth-panel">
+  <h2>Login</h2>
+  <p class="muted">Use your Django user credentials. Staff users get admin review access.</p>
+  <form method="post" class="grid two">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="accent" type="submit">Sign In</button>
+  </form>
+</section>
+{% endblock %}
