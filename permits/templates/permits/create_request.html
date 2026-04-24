@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="panel">
+  <h2>Create Work Permit Request</h2>
+  <form method="post" class="form-grid">
+    {% csrf_token %}
+
+    <h3 class="full">Permit Details</h3>
+    <label>{{ form.valid_from.label }} {{ form.valid_from }}</label>
+    <label>{{ form.valid_to.label }} {{ form.valid_to }}</label>
+    <label class="full">{{ form.location.label }} {{ form.location }}</label>
+
+    <fieldset class="full check-grid">
+      <legend>{{ form.work_types_multi.label }}</legend>
+      {{ form.work_types_multi }}
+    </fieldset>
+
+    <label class="full">{{ form.hazards.label }} {{ form.hazards }}</label>
+    <label class="full">{{ form.precautions.label }} {{ form.precautions }}</label>
+    <label class="full">{{ form.legal_requirements.label }} {{ form.legal_requirements }}</label>
+    <label class="full">{{ form.persons_to_notify.label }} {{ form.persons_to_notify }}</label>
+
+    <h3 class="full">Contractor & Work Area</h3>
+    <label>{{ form.contractor_name.label }} {{ form.contractor_name }}</label>
+    <label>{{ form.contact_person.label }} {{ form.contact_person }}</label>
+
+    <div class="phone-group">
+      <label>{{ form.country_code.label }} {{ form.country_code }}</label>
+      <label>{{ form.phone_number.label }} {{ form.phone_number }}</label>
+    </div>
+
+    <label>{{ form.department.label }} {{ form.department }}</label>
+    <label>{{ form.shift_start.label }} {{ form.shift_start }}</label>
+    <label>{{ form.shift_end.label }} {{ form.shift_end }}</label>
+    <label class="full">{{ form.exact_location.label }} {{ form.exact_location }}</label>
+
+    <h3 class="full">Safety Checklist</h3>
+    <fieldset class="full check-grid">
+      <legend>{{ form.ppe_items_multi.label }}</legend>
+      {{ form.ppe_items_multi }}
+    </fieldset>
+
+    <label class="full">{{ form.other_requirement.label }} {{ form.other_requirement }}</label>
+
+    {% if form.non_field_errors %}<p class="error full">{{ form.non_field_errors|join:', ' }}</p>{% endif %}
+    <button class="accent full" type="submit">Submit Work Permit Request</button>
+  </form>
+</section>
+{% endblock %}

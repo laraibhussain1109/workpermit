@@ -1,11 +1,13 @@
 (function () {
   const video = document.getElementById('camera-preview');
   const canvas = document.getElementById('camera-canvas');
-  const preview = document.getElementById('capture-preview');
-  const fileInput = document.getElementById('id_id_photo');
+  const idPreview = document.getElementById('capture-preview-id');
+  const visitorPreview = document.getElementById('capture-preview-visitor');
+  const idFileInput = document.getElementById('id_id_photo');
+  const visitorFileInput = document.getElementById('id_visitor_photo');
   const errorEl = document.getElementById('camera-error');
 
-  if (!video || !fileInput) return;
+  if (!video || !idFileInput || !visitorFileInput) return;
 
   let stream;
 
@@ -25,7 +27,7 @@
     stream = null;
   }
 
-  async function capturePhoto() {
+  async function capturePhoto(targetInput, targetPreview, filenamePrefix) {
     if (!video.srcObject) {
       errorEl.textContent = 'Start camera first.';
       return;
@@ -36,20 +38,21 @@
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
-    const file = new File([blob], `captured-id-${Date.now()}.jpg`, { type: 'image/jpeg' });
+    const file = new File([blob], `${filenamePrefix}-${Date.now()}.jpg`, { type: 'image/jpeg' });
 
     const dt = new DataTransfer();
     dt.items.add(file);
-    fileInput.files = dt.files;
+    targetInput.files = dt.files;
 
-    preview.src = URL.createObjectURL(file);
-    preview.classList.remove('hidden');
+    targetPreview.src = URL.createObjectURL(file);
+    targetPreview.classList.remove('hidden');
     errorEl.textContent = '';
   }
 
   document.getElementById('start-camera')?.addEventListener('click', startCamera);
   document.getElementById('stop-camera')?.addEventListener('click', stopCamera);
-  document.getElementById('capture-photo')?.addEventListener('click', capturePhoto);
+  document.getElementById('capture-id-photo')?.addEventListener('click', () => capturePhoto(idFileInput, idPreview, 'captured-id'));
+  document.getElementById('capture-visitor-photo')?.addEventListener('click', () => capturePhoto(visitorFileInput, visitorPreview, 'captured-visitor'));
 
   window.addEventListener('beforeunload', stopCamera);
 })();

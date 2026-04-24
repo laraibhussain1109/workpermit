@@ -19,6 +19,8 @@ body {
 }
 
 a { color: var(--accent-2); }
+.btn-link { color: var(--accent-2); font-weight: 600; text-decoration: none; }
+.btn-link:hover { text-decoration: underline; }
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -30,7 +32,20 @@ a { color: var(--accent-2); }
   top: 0;
   z-index: 10;
 }
-.topbar nav { display: flex; gap: .8rem; align-items: center; }
+.topbar h1 { font-size: 1.1rem; margin: 0; }
+.topbar nav { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.nav-link, .nav-btn, .welcome-pill {
+  padding: .45rem .75rem;
+  border-radius: 999px;
+  border: 1px solid #2f5f39;
+  background: #0d1610;
+  color: var(--text);
+  text-decoration: none;
+  font-size: .92rem;
+}
+.nav-link:hover, .nav-btn:hover { border-color: var(--accent); }
+.nav-btn { cursor: pointer; }
+.welcome-pill { background: #112118; color: var(--accent-2); border-color: #2f7e47; }
 .inline { display: inline; }
 
 .container {
@@ -104,6 +119,15 @@ button, .btn { cursor: pointer; text-decoration: none; display: inline-block; }
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: .8rem;
 }
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .8rem;
+}
+.stat { font-size: 2rem; font-weight: 800; margin: .4rem 0 0; }
+.stat.approved { color: #82f3ad; }
+.stat.pending { color: #ffea98; }
+.stat.rejected { color: #ffb0b0; }
 .card, .gov-card {
   border: 1px solid #2b5b36;
   border-radius: 12px;
@@ -126,6 +150,11 @@ button, .btn { cursor: pointer; text-decoration: none; display: inline-block; }
 
 .camera { border: 1px dashed #3f8b53; border-radius: 10px; padding: .7rem; }
 video, .capture-preview { width: 100%; max-height: 240px; object-fit: cover; border-radius: 8px; background: #000; }
+.capture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: .8rem;
+}
 .camera-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
 .hidden { display: none !important; }
 .actions { display: flex; gap: .5rem; }
@@ -186,4 +215,6 @@ video, .capture-preview { width: 100%; max-height: 240px; object-fit: cover; bor
 
 @media (max-width: 780px) {
   .form-grid, .grid.two, .phone-group { grid-template-columns: 1fr; }
+  .topbar { flex-direction: column; align-items: flex-start; gap: .6rem; }
+  .topbar nav { justify-content: flex-start; }
 }
