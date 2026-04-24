@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-shell">
+  <div class="auth-glow"></div>
+
+  <article class="auth-card panel">
+    <div class="auth-head">
+      <p class="chip">Secure Access</p>
+      <h2>Work Permit Login</h2>
+      <p class="muted">Sign in to create and track work permits. Staff accounts can review and approve requests.</p>
+    </div>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <p class="error">{{ form.non_field_errors|join:', ' }}</p>
+      {% endif %}
+
+      <label for="id_username">Username</label>
+      {{ form.username }}
+
+      <label for="id_password">Password</label>
+      {{ form.password }}
+
+      <button class="accent" type="submit">Sign In</button>
+    </form>
+
+    <div class="auth-foot muted">
+      <span>Need admin access?</span>
+      <span>Ask your system administrator to mark your user as staff.</span>
+    </div>
+  </article>
+</section>
+{% endblock %}

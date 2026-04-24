@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="panel">
+  <h2>Request #{{ permit.id }}</h2>
+  <div class="status {{ permit.status }}">{{ permit.get_status_display }}</div>
+  <p><strong>Location:</strong> {{ permit.location }}</p>
+  <p><strong>Contractor:</strong> {{ permit.contractor_name }}</p>
+  <p><strong>Work Types:</strong> {{ permit.work_types|default:'Not specified' }}</p>
+  <p><strong>Hazards:</strong> {{ permit.hazards }}</p>
+  <p><strong>Precautions:</strong> {{ permit.precautions }}</p>
+</section>
+
+{% if permit.status == 'approved' and gov_form %}
+<section class="panel gov-card">
+  <h3>Government ID Verification (Required after Approval)</h3>
+  <form method="post" enctype="multipart/form-data" class="form-grid compact" id="gov-id-form">
+    {% csrf_token %}
+    <label>{{ gov_form.id_type.label }} {{ gov_form.id_type }}</label>
+    <label>{{ gov_form.id_number.label }} {{ gov_form.id_number }}</label>
+    <label class="full">{{ gov_form.id_photo.label }} {{ gov_form.id_photo }}</label>
+
+    <div class="camera full">
+      <video id="camera-preview" playsinline autoplay muted></video>
+      <canvas id="camera-canvas" class="hidden"></canvas>
+      <img id="capture-preview" class="capture-preview hidden" alt="Captured ID" />
+      <div class="camera-actions">
+        <button type="button" id="start-camera">Start Camera</button>
+        <button type="button" id="capture-photo">Capture Photo</button>
+        <button type="button" id="stop-camera">Stop Camera</button>
+      </div>
+      <p id="camera-error" class="error"></p>
+    </div>
+
+    <button class="accent full" type="submit">Submit Government ID</button>
+  </form>
+</section>
+<script src="{% static 'js/id_capture.js' %}"></script>
+{% elif permit.government_id %}
+<section class="panel gov-card">
+  <h3>Government ID Submitted</h3>
+  <p><strong>Type:</strong> {{ permit.government_id.id_type }}</p>
+  <p><strong>ID Number:</strong> {{ permit.government_id.id_number }}</p>
+  <img class="capture-preview" src="{{ permit.government_id.id_photo.url }}" alt="ID Photo" />
+</section>
+{% endif %}
+{% endblock %}
