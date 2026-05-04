@@ -4,11 +4,35 @@ from django.db import models
 import uuid
 
 
+class Department(models.Model):
+    name = models.CharField(max_length=120, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class DepartmentMembership(models.Model):
+    class Role(models.TextChoices):
+        MEMBER = 'member', 'Member'
+        MANAGER = 'manager', 'Department Manager'
+        GENERAL_MANAGER = 'general_manager', 'General Manager'
+        SECURITY = 'security', 'Security Personnel'
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='department_membership')
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='members')
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.MEMBER)
+
+    def __str__(self):
+        return f'{self.user.username} ({self.department.name} - {self.get_role_display()})'
+
+
 class WorkPermitRequest(models.Model):
     class Status(models.TextChoices):
-        PENDING = 'pending', 'Pending'
+        PENDING_MANAGER = 'pending_manager', 'Pending Department Manager Review'
+        REJECTED_MANAGER = 'rejected_manager', 'Rejected by Department Manager'
+        PENDING_GENERAL_MANAGER = 'pending_general_manager', 'Pending General Manager Review'
+        REJECTED_GENERAL_MANAGER = 'rejected_general_manager', 'Rejected by General Manager'
         APPROVED = 'approved', 'Approved'
-        REJECTED = 'rejected', 'Rejected'
 
     WORK_TYPE_CHOICES = [
         ('Hot Work', 'Hot Work'),
@@ -56,11 +80,8 @@ class WorkPermitRequest(models.Model):
     contractor_name = models.CharField(max_length=255)
     contact_person = models.CharField(max_length=255)
     country_code = models.CharField(max_length=8, choices=COUNTRY_CHOICES, default='+91')
-    phone_number = models.CharField(
-        max_length=15,
-        validators=[RegexValidator(r'^\d{7,15}$', 'Enter a valid phone number (7-15 digits).')],
-    )
-    department = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=15, validators=[RegexValidator(r'^\d{7,15}$', 'Enter a valid phone number (7-15 digits).')])
+    department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name='work_permits')
     shift_start = models.DateTimeField()
     shift_end = models.DateTimeField()
     exact_location = models.CharField(max_length=255)
@@ -68,9 +89,11 @@ class WorkPermitRequest(models.Model):
     ppe_items = models.CharField(max_length=500, blank=True)
     other_requirement = models.CharField(max_length=255, blank=True)
 
-    status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
-    reviewed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='reviewed_permits')
-    reviewed_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=30, choices=Status.choices, default=Status.PENDING_MANAGER)
+    manager_reviewed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='manager_reviewed_permits')
+    manager_reviewed_at = models.DateTimeField(null=True, blank=True)
+    gm_reviewed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='gm_reviewed_permits')
+    gm_reviewed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -103,7 +126,7 @@ class GovernmentID(models.Model):
     id_type = models.CharField(max_length=30, choices=IdType.choices)
     id_number = models.CharField(max_length=100)
     id_photo = models.FileField(upload_to='government_ids/')
-    visitor_photo = models.ImageField(upload_to='visitor_photos/', blank=True, null=True)
+    visitor_photo = models.ImageField(upload_to='visitor_photos/')
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
