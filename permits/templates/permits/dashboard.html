@@ -1,65 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="panel">
-  <h2>Request Dashboard</h2>
-  <p class="muted">Track all your submitted work permits by status.</p>
-  <div class="status-grid">
-    <article class="card">
-      <h3>Approved Requests</h3>
-      <p class="stat approved">{{ approved_permits|length }}</p>
-    </article>
-    <article class="card">
-      <h3>Pending Requests</h3>
-      <p class="stat pending">{{ pending_permits|length }}</p>
-    </article>
-    <article class="card">
-      <h3>Rejected Requests</h3>
-      <p class="stat rejected">{{ rejected_permits|length }}</p>
-    </article>
-  </div>
-</section>
-
-<section class="panel">
-  <h3>Approved</h3>
+  <h2>My Work Permit Requests</h2>
+  <a class="btn accent" href="{% url 'create_request' %}">Create New Request</a>
   <div class="cards">
-    {% for permit in approved_permits %}
+    {% for permit in permits %}
       <article class="card">
-        <p><strong>Request ID:</strong> {{ permit.request_id }}</p>
-        <p><strong>Location:</strong> {{ permit.location }}</p>
-        <a class="btn-link" href="{% url 'request_detail' permit.pk %}">View Request</a>
+        <div class="status {{ permit.status }}">{{ permit.get_status_display }}</div>
+        <h4>{{ permit.request_id }} — {{ permit.location }}</h4>
+        <p><strong>Department:</strong> {{ permit.department.name }}</p>
+        <p><strong>Manager review:</strong> {{ permit.manager_reviewed_by|default:'Pending' }}</p>
+        <p><strong>GM review:</strong> {{ permit.gm_reviewed_by|default:'Pending' }}</p>
       </article>
     {% empty %}
-      <p class="muted">No approved requests.</p>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="panel">
-  <h3>Pending</h3>
-  <div class="cards">
-    {% for permit in pending_permits %}
-      <article class="card">
-        <p><strong>Request ID:</strong> {{ permit.request_id }}</p>
-        <p><strong>Location:</strong> {{ permit.location }}</p>
-        <a class="btn-link" href="{% url 'request_detail' permit.pk %}">View Request</a>
-      </article>
-    {% empty %}
-      <p class="muted">No pending requests.</p>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="panel">
-  <h3>Rejected</h3>
-  <div class="cards">
-    {% for permit in rejected_permits %}
-      <article class="card">
-        <p><strong>Request ID:</strong> {{ permit.request_id }}</p>
-        <p><strong>Location:</strong> {{ permit.location }}</p>
-        <a class="btn-link" href="{% url 'request_detail' permit.pk %}">View Request</a>
-      </article>
-    {% empty %}
-      <p class="muted">No rejected requests.</p>
+      <p>No requests yet.</p>
     {% endfor %}
   </div>
 </section>

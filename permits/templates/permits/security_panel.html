@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="panel">
+  <h2>Security Panel</h2>
+  <div class="cards">
+    {% for permit in permits %}
+      <article class="card">
+        <h4>{{ permit.request_id }} - {{ permit.location }}</h4>
+        <p>Approved by Department Manager: {{ permit.manager_reviewed_by }}</p>
+        <p>Approved by General Manager: {{ permit.gm_reviewed_by }}</p>
+        <a class="btn accent" href="{% url 'security_capture' permit.pk %}">Capture / Upload IDs</a>
+      </article>
+    {% empty %}<p>No approved requests available.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,31 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="panel">
-  <h2>Admin Review Panel</h2>
-  <p class="muted">Review, approve, or reject incoming work permit requests.</p>
+  <h2>{{ panel_name }} Review Panel</h2>
   <div class="cards">
     {% for permit in permits %}
       <article class="card">
-        <div class="status {{ permit.status }}">{{ permit.get_status_display }}</div>
-        <h4>#{{ permit.id }} — {{ permit.location }}</h4>
-        <p><strong>User:</strong> {{ permit.requested_by.username }}</p>
-        <p><strong>Contact:</strong> {{ permit.contact_person }} ({{ permit.country_code }} {{ permit.phone_number }})</p>
-        <p><strong>Hazards:</strong> {{ permit.hazards }}</p>
-        {% if permit.status == 'pending' %}
-          <div class="actions">
-            <a class="btn accent" href="{% url 'review_request' permit.pk 'approve' %}">Approve</a>
-            <a class="btn" href="{% url 'review_request' permit.pk 'reject' %}">Reject</a>
-          </div>
-        {% else %}
-          <p class="muted">Reviewed by {{ permit.reviewed_by|default:'N/A' }} on {{ permit.reviewed_at|default:'-' }}</p>
-        {% endif %}
-        {% if permit.government_id %}
-          <p class="muted">ID Uploaded: {{ permit.government_id.id_type }} ({{ permit.government_id.id_number }})</p>
-        {% endif %}
+        <h4>{{ permit.request_id }} - {{ permit.location }}</h4>
+        <p><strong>Requested by:</strong> {{ permit.requested_by.username }}</p>
+        <p><strong>Department:</strong> {{ permit.department.name }}</p>
+        <a class="btn accent" href="{% url 'review_request' permit.pk 'approve' %}">Approve</a>
+        <a class="btn" href="{% url 'review_request' permit.pk 'reject' %}">Reject</a>
       </article>
-    {% empty %}
-      <p class="muted">No requests found.</p>
-    {% endfor %}
+    {% empty %}<p>No requests in queue.</p>{% endfor %}
   </div>
 </section>
 {% endblock %}

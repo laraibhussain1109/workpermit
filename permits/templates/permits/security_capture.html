@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="panel gov-card">
+<h2>Security Verification: {{ permit.request_id }}</h2>
+<p>Both Government ID and Visitor photo are required.</p>
+<form method="post" enctype="multipart/form-data" class="form-grid compact">
+{% csrf_token %}
+<label>{{ gov_form.id_type.label }} {{ gov_form.id_type }}</label>
+<label>{{ gov_form.id_number.label }} {{ gov_form.id_number }}</label>
+<label>{{ gov_form.id_photo.label }} {{ gov_form.id_photo }}</label>
+<label>{{ gov_form.visitor_photo.label }} {{ gov_form.visitor_photo }}</label>
+<button class="accent full" type="submit">Submit Verification</button>
+</form>
+</section>
+{% endblock %}
